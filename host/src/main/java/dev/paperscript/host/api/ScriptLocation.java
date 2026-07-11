@@ -22,7 +22,7 @@ public final class ScriptLocation {
         this.pitch = pitch;
     }
 
-    public static ScriptLocation of(Location loc) {
+    static ScriptLocation of(Location loc) {
         String name = loc.getWorld() != null ? loc.getWorld().getName() : "world";
         return new ScriptLocation(name, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
     }
@@ -51,8 +51,8 @@ public final class ScriptLocation {
         return pitch;
     }
 
-    /** Resolve to a Bukkit location, falling back to the given world if the named one is missing. */
-    public Location resolve(World fallback) {
+    /** Resolve to a Bukkit location, falling back to the given world if the named one is missing. Host-only. */
+    Location resolve(World fallback) {
         World w = world != null ? Bukkit.getWorld(world) : null;
         if (w == null) w = fallback;
         return new Location(w, x, y, z, yaw, pitch);

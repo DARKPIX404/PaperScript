@@ -98,7 +98,10 @@ public final class ScriptPlayer {
         }
     }
 
-    public Player handle() {
+    // Package-private on purpose: exposes the raw Bukkit Player to host code only.
+    // Guest code must never reach it (HostAccess.ALL exposes only PUBLIC members),
+    // otherwise scripts could escape the facade and call arbitrary Bukkit methods.
+    Player handle() {
         return handle;
     }
 }

@@ -11,6 +11,10 @@ import org.graalvm.polyglot.io.IOAccess;
  * Notes:
  * - Only the curated facade is exposed to guest code. Host class lookup
  *   (Java.type), IO, native access and thread creation are disabled.
+ * - HostAccess.ALL exposes public members of the facade objects; the facade
+ *   returns only wrappers and primitives (raw-Bukkit accessors such as
+ *   ScriptPlayer.handle() / ScriptLocation.resolve() are package-private so
+ *   they stay invisible to guest code).
  * - A generous statement limit prevents runaway scripts. Exceeding it throws
  *   a ResourceLimitException for that context.
  * - GraalJS contexts are single-threaded: we only ever touch a context from
@@ -26,7 +30,7 @@ public final class ScriptEngine {
                 .build();
 
         return Context.newBuilder("js")
-                .allowHostAccess(HostAccess.SCOPED)
+                .allowHostAccess(HostAccess.ALL)
                 .allowHostClassLookup(className -> false)
                 .allowIO(IOAccess.NONE)
                 .allowNativeAccess(false)
