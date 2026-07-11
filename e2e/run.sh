@@ -37,6 +37,12 @@ mkdir -p plugins/PaperScript/scripts/e2e
 cp $HOST_JAR_GLOB plugins/
 cp "$E2E_DIR/plugin.json" "$E2E_DIR/index.js" plugins/PaperScript/scripts/e2e/
 
+if ! ls plugins/paperscript-host-*.jar >/dev/null 2>&1; then
+  echo "[e2e] host jar missing after copy; host/build/libs contains:"
+  ls -la host/build/libs 2>/dev/null || echo "(host/build/libs does not exist)"
+  exit 2
+fi
+
 mkfifo stdin
 ( java -Xmx1G -jar paper.jar nogui < stdin > server.log 2>&1 ) &
 SVPID=$!
