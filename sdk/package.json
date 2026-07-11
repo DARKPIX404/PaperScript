@@ -1,0 +1,28 @@
+{
+  "name": "@paperscript/sdk",
+  "version": "0.1.0",
+  "description": "Types and build tooling for PaperScript JS/TS plugins",
+  "type": "module",
+  "main": "./dist/build.js",
+  "types": "./dist/global.d.ts",
+  "bin": {
+    "paperscript": "./bin/paperscript.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "esbuild": "^0.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.0"
+  },
+  "license": "MIT"
+}

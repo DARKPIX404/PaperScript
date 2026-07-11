@@ -1,0 +1,13 @@
+{
+  "name": "hello",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "paperscript build",
+    "dev": "paperscript dev"
+  },
+  "devDependencies": {
+    "@paperscript/sdk": "^0.1.0",
+    "typescript": "^5.5.0"
+  }
+}

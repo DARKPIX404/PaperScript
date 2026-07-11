@@ -1,0 +1,16 @@
+name: PaperScript
+version: '0.1.0'
+main: dev.paperscript.host.PaperScriptPlugin
+api-version: '1.18'
+load: POSTWORLD
+authors: [PaperScript]
+description: Host for JS/TS plugins powered by GraalJS
+commands:
+  ps:
+    description: PaperScript management
+    usage: /ps <list|reload|info>
+    permission: paperscript.admin
+permissions:
+  paperscript.admin:
+    description: Manage PaperScript scripts
+    default: op

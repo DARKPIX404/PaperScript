@@ -1,0 +1,13 @@
+{
+  "name": "essentials",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node ../../sdk/dist/cli.js build",
+    "dev": "node ../../sdk/dist/cli.js dev"
+  },
+  "devDependencies": {
+    "@paperscript/sdk": "file:../../sdk",
+    "typescript": "^5.5.0"
+  }
+}
