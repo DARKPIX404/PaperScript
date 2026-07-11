@@ -8,6 +8,13 @@ HOST_JAR_GLOB="${1:?usage: run.sh <host-jar-glob>}"
 E2E_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VER="1.21.1"
 
+# Resolve the host jar to an ABSOLUTE path *before* we cd into the temp workdir.
+# The caller (CI step) may pre-expand the glob in the repo root into a relative
+# path; if we cd first, that relative path resolves against $WORK and fails.
+HOST_JAR_MATCH="$(ls $HOST_JAR_GLOB 2>/dev/null | head -n1 || true)"
+if [ -z "$HOST_JAR_MATCH" ]; then echo "[e2e] host jar not found: $HOST_JAR_GLOB"; exit 2; fi
+HOST_JAR_ABS="$(cd "$(dirname "$HOST_JAR_MATCH")" && pwd)/$(basename "$HOST_JAR_MATCH")"
+
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 cd "$WORK"
@@ -33,13 +40,11 @@ curl -fsSL -o paper.jar "$JAR_URL"
 echo "[e2e] setting up server in $WORK"
 echo "eula=true" > eula.txt
 mkdir -p plugins/PaperScript/scripts/e2e
-# shellcheck disable=SC2086
-cp $HOST_JAR_GLOB plugins/
+cp "$HOST_JAR_ABS" plugins/
 cp "$E2E_DIR/plugin.json" "$E2E_DIR/index.js" plugins/PaperScript/scripts/e2e/
 
 if ! ls plugins/paperscript-host-*.jar >/dev/null 2>&1; then
-  echo "[e2e] host jar missing after copy; host/build/libs contains:"
-  ls -la host/build/libs 2>/dev/null || echo "(host/build/libs does not exist)"
+  echo "[e2e] host jar missing after copy (from $HOST_JAR_ABS)"
   exit 2
 fi
 
