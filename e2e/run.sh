@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Real-Paper e2e: download Paper, boot a server with the host jar + probe script,
-# run a command from console and assert log markers. Pure bash + curl + grep.
+# run a command from console and assert log markers. Pure bash + curl + python3 + grep.
+# PaperMC API v2 is sunset (HTTP 410); downloads use the v3 Fill API.
 set -euo pipefail
 
 HOST_JAR_GLOB="${1:?usage: run.sh <host-jar-glob>}"
@@ -11,12 +12,23 @@ WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 cd "$WORK"
 
-echo "[e2e] resolving latest Paper $VER build"
-BUILD_JSON=$(curl -fsSL "https://api.papermc.io/v2/projects/paper/versions/$VER/builds")
-BUILD=$(printf '%s' "$BUILD_JSON" | grep -o '"build":[0-9]*' | tail -n1 | cut -d: -f2)
-if [ -z "$BUILD" ]; then echo "[e2e] could not resolve Paper build"; exit 2; fi
-echo "[e2e] Paper $VER build $BUILD"
-curl -fsSL -o paper.jar "https://api.papermc.io/v2/projects/paper/versions/$VER/builds/$BUILD/downloads/paper-$VER-$BUILD.jar"
+echo "[e2e] resolving latest Paper $VER build (PaperMC v3 / fill.papermc.io)"
+read -r BUILD JAR_URL JAR_NAME < <(python3 - "$VER" <<'PY'
+import sys, json, urllib.request
+ver = sys.argv[1]
+url = "https://fill.papermc.io/v3/projects/paper/versions/%s/builds" % ver
+req = urllib.request.Request(url, headers={"User-Agent": "PaperScript-e2e/1.0"})
+builds = json.load(urllib.request.urlopen(req, timeout=60))
+stable = [b for b in builds if b.get("channel") == "STABLE"]
+pool = stable if stable else builds
+b = max(pool, key=lambda x: x["id"])
+d = b["downloads"]["server:default"]
+print(b["id"], d["url"], d["name"])
+PY
+)
+if [ -z "${BUILD:-}" ] || [ -z "${JAR_URL:-}" ]; then echo "[e2e] could not resolve Paper build"; exit 2; fi
+echo "[e2e] Paper $VER build $BUILD -> $JAR_NAME"
+curl -fsSL -o paper.jar "$JAR_URL"
 
 echo "[e2e] setting up server in $WORK"
 echo "eula=true" > eula.txt
