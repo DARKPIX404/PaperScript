@@ -19,6 +19,8 @@ export async function buildPlugin(
     format: 'iife',
     platform: 'neutral',
     target: 'es2022',
+    sourcemap: 'linked',
+    sourcesContent: true,
     ...extra,
   });
 }

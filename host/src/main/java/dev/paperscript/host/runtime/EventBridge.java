@@ -1,29 +1,42 @@
 package dev.paperscript.host.runtime;
 
+import dev.paperscript.host.PaperScriptPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.logging.Level;
+
 /** Bridges Bukkit events to every loaded script instance. */
 public final class EventBridge implements Listener {
+    private final PaperScriptPlugin plugin;
     private final ScriptLoader loader;
 
-    public EventBridge(ScriptLoader loader) {
+    public EventBridge(PaperScriptPlugin plugin, ScriptLoader loader) {
+        this.plugin = plugin;
         this.loader = loader;
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         for (ScriptInstance instance : loader.instances()) {
-            instance.api().events.dispatchJoin(event.getPlayer());
+            try {
+                instance.api().events.dispatchJoin(event.getPlayer());
+            } catch (Exception ex) {
+                Errors.report(plugin.getLogger(), Level.WARNING, "player.join", instance.name(), ex);
+            }
         }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         for (ScriptInstance instance : loader.instances()) {
-            instance.api().events.dispatchQuit(event.getPlayer());
+            try {
+                instance.api().events.dispatchQuit(event.getPlayer());
+            } catch (Exception ex) {
+                Errors.report(plugin.getLogger(), Level.WARNING, "player.quit", instance.name(), ex);
+            }
         }
     }
 }

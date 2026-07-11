@@ -21,6 +21,7 @@ function baseOpts(entry: string, outfile: string): BuildOptions {
     format: 'iife',
     platform: 'neutral',
     target: 'es2022',
+    sourcemap: 'linked',
     logLevel: 'info',
   };
 }

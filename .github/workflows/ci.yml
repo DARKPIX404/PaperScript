@@ -24,6 +24,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Gradle build
         run: ./gradlew :host:shadowJar :host-legacy:build --no-daemon
+      - name: E2E (real Paper)
+        run: bash e2e/run.sh host/build/libs/paperscript-host-*.jar
+        timeout-minutes: 8
       - name: Upload host jar
         uses: actions/upload-artifact@v4
         with:

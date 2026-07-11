@@ -65,7 +65,7 @@ public final class ScriptLoader {
             instances.put(manifest.name, instance);
             plugin.getLogger().info("Loaded script: " + manifest.name + " v" + manifest.version);
         } catch (Exception ex) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to load script in " + folderName, ex);
+            Errors.report(plugin.getLogger(), Level.SEVERE, "Load", folderName, ex);
         }
     }
 

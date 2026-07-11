@@ -1,0 +1,7 @@
+{
+  "name": "e2e",
+  "version": "0.0.0",
+  "main": "index.js",
+  "apiVersion": "1",
+  "authors": ["paperscript-ci"]
+}

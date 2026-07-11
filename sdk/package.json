@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "esbuild": "^0.23.0"
@@ -24,5 +25,15 @@
     "@types/node": "^22.5.0",
     "typescript": "^5.5.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DARKPIX404/PaperScript.git",
+    "directory": "sdk"
+  },
+  "homepage": "https://github.com/DARKPIX404/PaperScript/tree/main/sdk#readme",
+  "bugs": "https://github.com/DARKPIX404/PaperScript/issues",
+  "publishConfig": {
+    "access": "public"
+  }
 }

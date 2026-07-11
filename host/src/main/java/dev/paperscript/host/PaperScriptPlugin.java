@@ -17,7 +17,7 @@ public final class PaperScriptPlugin extends JavaPlugin {
         this.scriptLoader = new ScriptLoader(this, scriptsDir);
         scriptLoader.loadAll();
 
-        getServer().getPluginManager().registerEvents(new EventBridge(scriptLoader), this);
+        getServer().getPluginManager().registerEvents(new EventBridge(this, scriptLoader), this);
 
         var ps = getCommand("ps");
         if (ps != null) {
