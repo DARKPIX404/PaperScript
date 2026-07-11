@@ -1,5 +1,15 @@
 name: PaperScriptLegacy
-version: '0.1.0'
+version: '0.2.0'
 main: dev.paperscript.legacy.PaperScriptLegacyPlugin
+load: POSTWORLD
 authors: [PaperScript]
-description: PaperScript for legacy servers (1.12.2-1.16.5). Foundation stub; Nashorn JS engine arrives in v1.1.
+description: PaperScript for legacy servers (1.12.2-1.16.5) — Nashorn JS engine, same ps.* facade.
+commands:
+  ps:
+    description: PaperScript management
+    usage: /ps <list|reload|info>
+    permission: paperscript.admin
+permissions:
+  paperscript.admin:
+    description: Manage PaperScript scripts
+    default: op

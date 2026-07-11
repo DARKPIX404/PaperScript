@@ -11,8 +11,27 @@ the host.
   access goes through the facade (`ps.storage`, `ps.players`, `ps.worlds`, …).
 - Native / unsafe access — disabled (`allowNativeAccess(false)`).
 - Thread creation — disabled (`allowCreateThread(false)`).
-- Only the curated facade (`ps`) is reachable via `HostAccess.SCOPED`; raw Bukkit
-  objects are never handed to guests (slim wrappers: `ScriptPlayer`, `ScriptWorld`, …).
+- Only the curated facade (`ps`) is reachable: `HostAccess.ALL` exposes the
+  facade's public members, while raw-Bukkit accessors on wrappers
+  (`ScriptPlayer.handle()`, `ScriptLocation.of()/resolve()`) are kept
+  package-private so guests can never reach raw Bukkit objects.
+
+## Legacy line (1.12.2–1.16.5, Nashorn)
+
+The legacy host (`host-legacy/`) enforces the same contract with different
+mechanics — and one honest gap:
+
+- Nashorn engines are created with `--no-java` (no `Java.type`/`Packages`/class
+  lookup) plus a prelude that deletes the remaining host globals
+  (`load`, `quit`, `$EXEC`, `$ENV`, `readFully`, …).
+- Same rule as modern: only the `ps` facade is bound; wrappers expose no raw
+  Bukkit (package-private accessors).
+- **No statement/time limit** — Nashorn has no equivalent of GraalJS
+  `ResourceLimits`. A runaway `while(true)` script can stall the server main
+  thread. Only run scripts you trust on legacy servers; prefer the modern host
+  where hard limits exist.
+- `ctx.args` is a Java array: index access and `.length` work, JS Array methods
+  do not — use `ctx.arg(i)` or `Array.prototype.slice.call(ctx.args)`.
 
 ## Runaway protection
 

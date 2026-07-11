@@ -6,7 +6,8 @@ set -euo pipefail
 
 HOST_JAR_GLOB="${1:?usage: run.sh <host-jar-glob>}"
 E2E_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VER="1.21.1"
+VER="${PAPER_VERSION:-1.21.1}"
+JAVA_BIN="${JAVA_BIN:-java}"
 
 # Resolve the host jar to an ABSOLUTE path *before* we cd into the temp workdir.
 # The caller (CI step) may pre-expand the glob in the repo root into a relative
@@ -39,17 +40,19 @@ curl -fsSL -o paper.jar "$JAR_URL"
 
 echo "[e2e] setting up server in $WORK"
 echo "eula=true" > eula.txt
-mkdir -p plugins/PaperScript/scripts/e2e
+# Data folder follows the plugin name (PaperScript modern / PaperScriptLegacy).
+PS_PLUGIN_DIR="${PS_PLUGIN_DIR:-PaperScript}"
+mkdir -p "plugins/$PS_PLUGIN_DIR/scripts/e2e"
 cp "$HOST_JAR_ABS" plugins/
-cp "$E2E_DIR/plugin.json" "$E2E_DIR/index.js" plugins/PaperScript/scripts/e2e/
+cp "$E2E_DIR/plugin.json" "$E2E_DIR/index.js" "plugins/$PS_PLUGIN_DIR/scripts/e2e/"
 
-if ! ls plugins/paperscript-host-*.jar >/dev/null 2>&1; then
+if ! ls plugins/paperscript-*.jar >/dev/null 2>&1; then
   echo "[e2e] host jar missing after copy (from $HOST_JAR_ABS)"
   exit 2
 fi
 
 mkfifo stdin
-( java -Xmx1G -jar paper.jar nogui < stdin > server.log 2>&1 ) &
+( "$JAVA_BIN" -Xmx1G -jar paper.jar nogui < stdin > server.log 2>&1 ) &
 SVPID=$!
 exec 3> stdin
 

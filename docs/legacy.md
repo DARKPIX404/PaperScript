@@ -30,7 +30,10 @@ marked and degrade gracefully (documented).
   `setSpawnLocation(int, int, int)` overload.
 
 ## Status
-- v1: `host-legacy/` is a compilable **foundation stub** (Bukkit 1.12.2, Java 8)
-  plus this design. The Gradle build is multi-module ready (`:host`, `:host-legacy`).
-- v1.1: implement the Nashorn `ScriptEngine`, the legacy chat renderer, and the
-  shared facade; ship the `essentials` plugin on 1.12.2/1.16.5.
+- v1: `host-legacy/` was a compilable **foundation stub** (Bukkit 1.12.2, Java 8)
+  plus this design.
+- **v1.1 (done): Nashorn `ScriptEngine` (`--language=es6 --no-java` + prelude),
+  legacy `&`-chat renderer, full shared facade, `/ps` command, tiny dependency-free
+  JSON (manifest + storage). CI job `E2E legacy` boots a real Paper 1.12.2 server
+  on Temurin 8 and asserts the probe markers. Bundle for legacy with
+  `"target": "es2015"` in `plugin.json` (SDK ≥ 0.2.0).**

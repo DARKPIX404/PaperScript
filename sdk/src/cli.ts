@@ -13,14 +13,30 @@ function entryAndOut(): { entry: string; out: string } {
   };
 }
 
-function baseOpts(entry: string, outfile: string): BuildOptions {
+/**
+ * Output language level. Reads `target` from the plugin's plugin.json so one TS
+ * source can bundle for both hosts: default es2022 (modern GraalJS), or
+ * "es2015" for the legacy Nashorn line (1.12.2-1.16.5).
+ */
+function readTarget(): string {
+  try {
+    const manifest = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), 'plugin.json'), 'utf8')
+    );
+    return typeof manifest.target === 'string' ? manifest.target : 'es2022';
+  } catch {
+    return 'es2022';
+  }
+}
+
+function baseOpts(entry: string, outfile: string, target: string): BuildOptions {
   return {
     entryPoints: [entry],
     outfile,
     bundle: true,
     format: 'iife',
     platform: 'neutral',
-    target: 'es2022',
+    target,
     sourcemap: 'linked',
     logLevel: 'info',
   };
@@ -28,15 +44,16 @@ function baseOpts(entry: string, outfile: string): BuildOptions {
 
 async function runBuild(): Promise<void> {
   const { entry, out } = entryAndOut();
+  const target = readTarget();
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  await build(baseOpts(entry, out));
-  console.log('built ->', path.relative(process.cwd(), out));
+  await build(baseOpts(entry, out, target));
+  console.log('built ->', path.relative(process.cwd(), out), `(${target})`);
 }
 
 async function runDev(): Promise<void> {
   const { entry, out } = entryAndOut();
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  const ctx = await context(baseOpts(entry, out));
+  const ctx = await context(baseOpts(entry, out, readTarget()));
   await ctx.watch();
   console.log(
     'watching',
