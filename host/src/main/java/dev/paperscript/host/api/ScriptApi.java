@@ -32,6 +32,20 @@ public final class ScriptApi {
         this.storage = new StorageApi(dataDir.resolve("storage").resolve(scriptName + ".json"), plugin.getLogger());
     }
 
+    // JavaBean getters so GraalJS (HostAccess.SCOPED) exposes them as guest
+    // properties `ps.logger`, `ps.commands`, ... Public fields are NOT visible
+    // to guest code under SCOPED, so these getters are the runtime surface that
+    // sdk/src/global.ts mirrors. Keep names in sync.
+    public LoggerApi getLogger() { return logger; }
+    public EventsApi getEvents() { return events; }
+    public CommandsApi getCommands() { return commands; }
+    public SchedulerApi getScheduler() { return scheduler; }
+    public PlayersApi getPlayers() { return players; }
+    public WorldsApi getWorlds() { return worlds; }
+    public ServerApi getServer() { return server; }
+    public LocationsApi getLoc() { return loc; }
+    public StorageApi getStorage() { return storage; }
+
     public void onEnable(Value fn) {
         this.onEnable = fn;
     }
