@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses SemVer.
 
 ## [0.2.0]
+- Modern host hardening (since 0.1.0): facade reachable under `HostAccess.ALL`
+  with raw-Bukkit accessors package-private, JavaBean getters on `ScriptApi`,
+  per-script error reporting (`Errors.report`), source maps in the SDK build,
+  `docs/security.md`, and real-Paper e2e in CI (PaperMC v3 Fill downloads).
 - Legacy host (`host-legacy/`) v1.1: sandboxed **Nashorn** engine
   (`--language=es6 --no-java` + host-global prelude) for Paper/Spigot
   1.12.2–1.16.5 on Java 8/11.

@@ -17,10 +17,12 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build host jar
-        run: ./gradlew :host:shadowJar --no-daemon
+      - name: Build host jars (modern + legacy)
+        run: ./gradlew :host:shadowJar :host-legacy:build --no-daemon
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          files: host/build/libs/paperscript-host-*.jar
+          files: |
+            host/build/libs/paperscript-host-*.jar
+            host-legacy/build/libs/paperscript-legacy-*.jar
           generate_release_notes: true
